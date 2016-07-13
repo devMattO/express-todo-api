@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const router = express.Router();
+let buzzArr = [];
 
 //------ROUTES-------------
 let buzzwordRouter = require('./routes/buzzword');
@@ -16,7 +17,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.get('/buzzwords', (req,res)=>{
   res.send({
-    'buzzWords': ['budz']
+    'buzzWords': buzzArr
   });
 });
 
@@ -30,6 +31,10 @@ app.route('/buzzword')
   .delete((req,res)=>{
     res.send();
   });
+
+app.post('/reset', (req,res)=>{
+  res.send();
+});
 
 const server = app.listen(3000, ()=>{
   let host = server.address().address;
