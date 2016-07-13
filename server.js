@@ -11,8 +11,8 @@ app.use( express.static( 'public' ) );
 app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded( {extended:true} ) );
 
-//------REQUESTS---------------
-app.get( '/buzzwords', ( req,res ) => {
+//------REQUEST-HANDLERS--------------
+app.get( '/buzzwords', ( req, res ) => {
   res.send({
     'buzzWords': buzzArr
   });
