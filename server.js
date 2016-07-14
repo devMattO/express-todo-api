@@ -47,21 +47,6 @@ function buzzwordPost( req, res ) {
   res.send( {'success': true} );
 }
 
-// function buzzwordPut( req, res ) {
-//   for ( let i = 0; i < buzzArr.length; i++ ) { //----------try functionally with map??
-//     if( buzzArr[i].buzzword === req.body.buzzword && req.body.heard === true) { //if the buzzword in the array|object is the same as the one coming in the body
-//       new_score += parseFloat( buzzArr[i].points ); //add its point value to your score
-//       res.send( {'success': true, 'newScore': new_score} );
-//       return;
-//     }else if(buzzArr[i].buzzword === req.body.buzzword && req.body.heard !== true){
-//       new_score -= parseFloat( buzzArr[i].points );
-//       res.send( {'success': true, 'newScore': new_score} );
-//       return;
-//     }
-//   }
-//   res.send( 'Even sherlock holmes couldn\'t find that buzzword, yo!' );
-// }
-
 function buzzwordPut( req, res ) {
   let pointsEarned = parseFloat(buzzArr.filter((el) => {
       return el.buzzword === req.body.buzzword;
@@ -94,9 +79,11 @@ function buzzwordReset( req, res ) {
 }
 
 //-------SERVER------------
-const server = app.listen( 3000, () => {
-  let host = server.address().address;
-  let port = server.address().port;
+// const server = app.listen( 3000, () => {
+//   let host = server.address().address;
+//   let port = server.address().port;
 
-  console.log( `Example app listening at http://localhost:${port}` );
-});
+//   console.log( `Example app listening at http://localhost:${port}` );
+// });
+
+module.exports = app;
