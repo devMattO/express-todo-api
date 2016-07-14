@@ -11,6 +11,19 @@ app.use( express.static( 'public' ) );
 app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded( {extended:true} ) );
 
+function hasCorrectKeys(keysToCheck){
+  return function(req,res,next){
+    let isValid = keysToCheck.every(function(el){
+      return req.body.hasOwnProperty(el);
+    });
+    if(isValid){
+      return next();
+    }else{
+      return res.send('AHHHH FUCK something\'s wrong');
+    }
+  };
+}
+
 //------REQUEST-HANDLERS--------------
 app.get( '/buzzwords', ( req, res ) => {
   res.send({
@@ -19,11 +32,11 @@ app.get( '/buzzwords', ( req, res ) => {
 });
 
 app.route( '/buzzword' )
-  .post( buzzwordPost )
-  .put( buzzwordPut )
-  .delete( buzzwordDelete );
+  .post( hasCorrectKeys(['buzzword', 'points']), buzzwordPost )
+  .put( hasCorrectKeys(['buzzword', 'heard']), buzzwordPut )
+  .delete( hasCorrectKeys(['buzzword']), buzzwordDelete );
 
-app.post( '/reset', ( req, res ) => {
+app.post( '/reset', hasCorrectKeys(['reset']), ( req, res ) => {
   buzzwordReset( req, res );
 });
 
@@ -34,15 +47,31 @@ function buzzwordPost( req, res ) {
   res.send( {'success': true} );
 }
 
+// function buzzwordPut( req, res ) {
+//   for ( let i = 0; i < buzzArr.length; i++ ) { //----------try functionally with map??
+//     if( buzzArr[i].buzzword === req.body.buzzword && req.body.heard === true) { //if the buzzword in the array|object is the same as the one coming in the body
+//       new_score += parseFloat( buzzArr[i].points ); //add its point value to your score
+//       res.send( {'success': true, 'newScore': new_score} );
+//       return;
+//     }else if(buzzArr[i].buzzword === req.body.buzzword && req.body.heard !== true){
+//       new_score -= parseFloat( buzzArr[i].points );
+//       res.send( {'success': true, 'newScore': new_score} );
+//       return;
+//     }
+//   }
+//   res.send( 'Even sherlock holmes couldn\'t find that buzzword, yo!' );
+// }
+
 function buzzwordPut( req, res ) {
-  for ( let i = 0; i < buzzArr.length; i++ ) { //----------try functionally with map??
-    if( buzzArr[i].buzzword === req.body.buzzword ) { //if the buzzword in the array|object is the same as the one coming in the body
-      new_score += parseFloat( buzzArr[i].points ); //add its point value to your score
-      res.send( {'success': true, 'newScore': new_score} );
-      return;
-    }
+  let pointsEarned = parseFloat(buzzArr.filter((el) => {
+      return el.buzzword === req.body.buzzword;
+    })[0].points);
+  if(req.body.heard === 'true'){
+    new_score+=pointsEarned;
+  }else if(req.body.heard === 'false'){
+    new_score-=pointsEarned;
   }
-  res.send( 'Even sherlock holmes couldn\'t find that buzzword, yo!' );
+  res.send( {'success': true, 'newScore': new_score} );
 }
 
 function buzzwordDelete( req, res ) {
